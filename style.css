@@ -1,68 +1,114 @@
-body {
+* {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #e6f7ff, #b3e0ff);
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  background: linear-gradient(135deg, #89cff0, #0077b6);
+  transition: 0.5s ease;
 }
 
-/* Main container */
 .container {
-  background: white;
-  padding: 30px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  padding: 40px 30px;
   border-radius: 20px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
   text-align: center;
-  width: 320px;
+  width: 90%;
+  max-width: 350px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  color: white;
 }
 
-/* Title */
 h1 {
-  color: #0077b6;
   margin-bottom: 20px;
 }
 
-/* Search section */
 .search-box {
   display: flex;
   gap: 10px;
-  justify-content: center;
+  margin-bottom: 20px;
 }
 
-/* Input */
 input {
-  padding: 10px;
+  flex: 1;
+  padding: 12px;
   border-radius: 10px;
-  border: 1px solid #ccc;
-  width: 60%;
+  border: none;
+  outline: none;
 }
 
-/* Button */
 button {
-  padding: 10px;
+  padding: 12px;
   border: none;
   border-radius: 10px;
-  background: #0077b6;
-  color: white;
-  cursor: pointer;
+  background: white;
+  color: #0077b6;
   font-weight: bold;
+  cursor: pointer;
 }
 
 button:hover {
-  background: #0096c7;
+  background: #caf0f8;
 }
 
-/* Weather display */
-.weather {
-  margin-top: 20px;
+/* Weather result */
+.weather-card {
+  animation: fadeIn 0.6s ease-in-out;
 }
 
-.weather h2 {
-  color: #023e8a;
+.weather-card h2 {
+  margin-bottom: 10px;
 }
 
-.weather img {
-  width: 80px;
+.weather-card p {
+  margin: 5px 0;
+}
+
+.icon {
+  width: 90px;
+  margin-top: 10px;
+}
+
+/* Animations */
+.sunny {
+  animation: spin 8s linear infinite;
+}
+
+.cloudy {
+  animation: float 3s ease-in-out infinite;
+}
+
+.rainy {
+  animation: shake 0.8s infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  50% { transform: translateX(2px); }
+  75% { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
