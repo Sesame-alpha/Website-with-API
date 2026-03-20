@@ -3,27 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Weather App</title>
+  <title>5 Day Weather Forecast</title>
 
   <link rel="stylesheet" href="styles.css">
-
-  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
   <div class="app">
 
-    <h1>Weather</h1>
+    <h1>5 Day Weather Forecast</h1>
+
+    <p class="subtitle">Enter your city name to check its 5-day weather forecast</p>
 
     <div class="search">
       <input type="text" id="city" placeholder="Enter city">
       <button onclick="getWeather()">Search</button>
     </div>
 
-    <div id="result"></div>
-
+    <!-- Chart at the TOP -->
     <canvas id="chart"></canvas>
+
+    <div id="result"></div>
 
   </div>
 
