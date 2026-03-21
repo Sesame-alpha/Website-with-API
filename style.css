@@ -311,4 +311,8 @@ footer {
         flex: 1;
         min-width: 160px;
     }
+    .weather-emoji {
+    font-size: 2rem;
+    margin: 0.3rem 0;
+    }
         }
