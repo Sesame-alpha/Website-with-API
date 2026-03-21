@@ -1,7 +1,6 @@
 // ========================
 //  THE ORBIT WEATHER FORECAST
-//  Uses OpenWeatherMap API
-//  Global city search + 7‑day forecast
+//  Uses OpenWeatherMap 5-day forecast (free tier)
 // ========================
 
 // ------------------------------
@@ -15,16 +14,7 @@ const searchBtn = document.getElementById('searchBtn');
 const selectedCityDisplay = document.getElementById('selectedCityDisplay');
 const forecastContainer = document.getElementById('forecastCardsContainer');
 
-// Live timer
-function updateTimer() {
-    const now = new Date();
-    const timeStr = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    document.getElementById('liveTimer').innerText = timeStr;
-}
-updateTimer();
-setInterval(updateTimer, 1000);
-
-// Helper: format date to "Sat Mar 04" style
+// Helper: format date to "Sat Mar 04"
 function formatDate(date) {
     const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -42,15 +32,37 @@ async function getCoordinates(cityName) {
     return { lat, lon, displayName: `${name}, ${country}` };
 }
 
-// 2. Get 7‑day daily forecast (One Call API 3.0)
-async function getForecast(lat, lon) {
-    const forecastUrl = `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&exclude=current,minutely,hourly,alerts&units=metric&appid=${API_KEY}`;
+// 2. Get 5-day forecast (3-hour intervals) and aggregate daily min/max
+async function getDailyForecast(lat, lon) {
+    const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`;
     const response = await fetch(forecastUrl);
     if (!response.ok) throw new Error('Forecast service error');
     const data = await response.json();
-    if (!data.daily || data.daily.length === 0) throw new Error('No forecast data available');
-    // Return only the first 7 days (OneCall returns up to 7 or 8)
-    return data.daily.slice(0, 7);
+
+    // Group by date (YYYY-MM-DD)
+    const dailyMap = new Map(); // key: date string, value: { max, min, date }
+
+    for (const item of data.list) {
+        const date = new Date(item.dt * 1000);
+        const dateKey = date.toISOString().split('T')[0];
+        const temp = item.main.temp;
+
+        if (!dailyMap.has(dateKey)) {
+            dailyMap.set(dateKey, { max: temp, min: temp, date: date });
+        } else {
+            const entry = dailyMap.get(dateKey);
+            entry.max = Math.max(entry.max, temp);
+            entry.min = Math.min(entry.min, temp);
+        }
+    }
+
+    // Convert map to array and sort by date, take first 7 days (max)
+    let dailyArray = Array.from(dailyMap.values())
+        .sort((a, b) => a.date - b.date)
+        .slice(0, 7);
+
+    // If less than 7 days available (shouldn't happen), return what we have
+    return dailyArray;
 }
 
 // Render forecast cards
@@ -58,12 +70,10 @@ function renderForecast(dailyData, cityName) {
     selectedCityDisplay.textContent = cityName;
 
     let cardsHtml = '<div class="cards-grid">';
-    for (let i = 0; i < dailyData.length; i++) {
-        const day = dailyData[i];
-        const date = new Date(day.dt * 1000);
-        const dayName = formatDate(date);
-        const maxTemp = Math.round(day.temp.max);
-        const minTemp = Math.round(day.temp.min);
+    for (const day of dailyData) {
+        const dayName = formatDate(day.date);
+        const maxTemp = Math.round(day.max);
+        const minTemp = Math.round(day.min);
 
         cardsHtml += `
             <div class="forecast-card">
@@ -111,8 +121,8 @@ async function searchCityAndForecast() {
     try {
         // Step 1: Get coordinates
         const { lat, lon, displayName } = await getCoordinates(rawCity);
-        // Step 2: Get 7‑day forecast
-        const dailyForecast = await getForecast(lat, lon);
+        // Step 2: Get 5-day forecast and aggregate daily min/max
+        const dailyForecast = await getDailyForecast(lat, lon);
         // Step 3: Render
         renderForecast(dailyForecast, displayName);
     } catch (err) {
@@ -127,8 +137,5 @@ cityInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') searchCityAndForecast();
 });
 
-// Optional default city on load
-window.addEventListener('load', () => {
-    cityInput.value = 'London';
-    searchCityAndForecast();
-});
+// No default city – input is empty on load
+// The initial message in HTML is "Enter a city to begin"
