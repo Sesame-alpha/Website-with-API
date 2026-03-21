@@ -1,33 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>5 Day Weather Forecast</title>
-
-  <link rel="stylesheet" href="styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>The Orbit · Global Weather Forecast</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="forecast-app">
+        <div class="brand">
+            <div class="title-section">
+                <h1>🌍 THE ORBIT WEATHER FORECAST</h1>
+                <p>Global 7‑day outlook · Powered by OpenWeather</p>
+            </div>
+            <div class="timer-badge">
+                ⏱️ [<span id="liveTimer">--:--:--</span>]
+            </div>
+        </div>
 
-  <div class="app">
+        <div class="controls">
+            <div class="city-search">
+                <label>📍 Search any city</label>
+                <input type="text" id="cityInput" placeholder="e.g., Tokyo, Paris, New York" autocomplete="off">
+                <button id="searchBtn">Get Forecast</button>
+            </div>
+            <div class="result-heading">✦ 7‑DAY FORECAST ✦</div>
+        </div>
 
-    <h1>5 Day Weather Forecast</h1>
+        <div class="city-banner">
+            <div class="presenting">🌤️ Current forecast for</div>
+            <div class="city-name" id="selectedCityDisplay">—</div>
+        </div>
 
-    <p class="subtitle">Enter your city name to check its 5-day weather forecast</p>
+        <div class="forecast-container">
+            <div id="forecastCardsContainer">
+                <div class="loading-spinner">
+                    <div class="spinner"></div> Enter a city to begin
+                </div>
+            </div>
+        </div>
 
-    <div class="search">
-      <input type="text" id="city" placeholder="Enter city">
-      <button onclick="getWeather()">Search</button>
+        <footer>
+            ⛅ Data provided by OpenWeatherMap • Real‑time global coverage
+        </footer>
     </div>
 
-    <!-- Chart at the TOP -->
-    <canvas id="chart"></canvas>
-
-    <div id="result"></div>
-
-  </div>
-
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
